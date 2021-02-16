@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # LOCAL PROPERTIES
-# local.py
+local.py

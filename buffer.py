@@ -1,10 +1,9 @@
 
 class Buffer:
-    def __init__(self, s, buffer_size=4092):
+    def __init__(self, s, buffer_size=4096):
         '''Buffer a pre-created socket.
         '''
         self.sock = s
-        self.buffer = b''
         self.buffer_size = buffer_size
 
     def get_bytes(self, f, progress=None):
@@ -13,6 +12,11 @@ class Buffer:
         while data:
             f.write(data)
             data = self.sock.recv(self.buffer_size)
+
+            # update the progress bar if progress not None
+            if progress:
+                progress.update(len(data))
+
         # close the client socket
         self.sock.close()
         print('File received successfully.')
@@ -28,24 +32,17 @@ class Buffer:
             # busy networks
             self.sock.sendall(bytes_read)
 
-            # update the progress bar
+            # update the progress bar if progress not None
             if progress:
                 progress.update(len(bytes_read))
-
-        # self.sock.close()
-        # self.sock.sendall(data)
-
-        # 2º MODE OF DATA TRANSMISSION
-        # data = f.read(self.buffer_size)
-        # while data:
-        #     self.sock.send(data)
-        #     data = f.read(self.buffer_size)
+        
+        print('File sended successfully.')
 
     def get_utf8(self):
-        """Get text at header"""
-        # receive using client socket, not server socket
+        """Get file metadata from client and decode to utf-8 string."""
         received = self.sock.recv(self.buffer_size).decode()
         return received
 
-    def put_utf8(self, s):
-        self.sock.send(s.encode())
+    def put_utf8(self, meta):
+        """Send file metadata as bytes."""
+        self.sock.send(meta.encode())

@@ -7,24 +7,19 @@ class FileClient:
     connection = None
 
     def __init__(self, *args, **kwargs):
-        # separator
-        self.separator = "<SEPARATOR>"
-
-        # send 4096 bytes each time step
-        self.buffer_size = 4096
-
         # the ip address or hostname of the server, the receiver
-        self.host = kwargs.get("host", "localhost") # "192.168.1.101"
-
-        # the port, let's use 5001 as default
+        self.host = kwargs.get("host", "localhost")
+        # the port, if not set, the port 5001 is default
         self.port = kwargs.get("port", 5001)
-
+        # get separator
+        self.separator = kwargs.get("separator", "<SEPARATOR>")
+        # send 4096 bytes each time step
+        self.buffer_size = kwargs.get("buffer_size", 4096)
         # absolute path
-        self.app_abspath = dirname(abspath(__file__))
-
-        # input path
-        self.input_path = join(self.app_abspath, "input")
-
+        self.app_path = kwargs.get("app_path", dirname(abspath(__file__)))
+        # files path
+        self.path = kwargs.get("path", join(self.app_path, "input"))
+        # initilize socket connection
         self.get_connection()
 
     def get_connection(self):
@@ -42,8 +37,8 @@ class FileClient:
         print("[FILE SIZE]:", filesize, "\n")
 
     def send_file(self, filename):
-        # join input path with filename
-        filepath = join(self.input_path, filename)
+        # join file path with filename
+        filepath = join(self.path, filename)
         
         if not exists(filepath):
             print(f"[ERROR]: file {filepath} doesn't exist")
@@ -73,13 +68,20 @@ class FileClient:
             self.get_connection()
 
     def bulk_send_file(self):
-        for filename in listdir(self.input_path):
+        for filename in listdir(self.path):
             self.send_file(filename)
 
 if __name__ == "__main__":
-    from local import client_host
+    from local import (
+        client_host, port, buffer_size, separator,
+        app_path, client_path
+    )
 
     # if host not set, the default is localhost
-    fc = FileClient(host=client_host)
-    # fc.send_file("abc.txt")
-    fc.bulk_send_file() # send all files from input path to server
+    fc = FileClient(
+        host=client_host, port=port, buffer_size=buffer_size,
+        separator=separator, app_path=app_path, path=client_path
+    )
+    # fc = FileClient()
+    fc.send_file("abc.txt")
+    # fc.bulk_send_file() # send all files from file path to server

@@ -7,8 +7,9 @@ class FileServer:
     connection = None
 
     def __init__(self, *args, **kwargs):
-        # device's IP address
+        # if host not set, the default is 0.0.0.0
         self.host = kwargs.get("host", "0.0.0.0")
+        # if port not set, the default is 5001
         self.port = kwargs.get("port", 5001)
         # receive 4096 bytes each time
         self.buffer_size = kwargs.get("buffer_size", 4096)
@@ -17,7 +18,7 @@ class FileServer:
         # absolute path
         self.app_path = kwargs.get("app_path", dirname(abspath(__file__)))
         # input path
-        self.output_path = kwargs.get("output_path", join(self.app_path, "output"))
+        self.path = kwargs.get("path", join(self.app_path, "output"))
         # initilize socket connection
         self.connection = self.get_connection(self.host, self.port)
 
@@ -54,8 +55,8 @@ class FileServer:
         filename = basename(filename)
         # convert to integer
         filesize = int(filesize)
-        # file path output
-        filepath = join(self.output_path, filename)
+        # file path
+        filepath = join(self.path, filename)
 
         # progress = tqdm.tqdm(
         #     iterable=range(filesize), desc = f"Receiving {filename}", 
@@ -85,8 +86,8 @@ class FileServer:
         client_socket.close()
 
     def bulk_receive_file(self):
-        # start receiving the file from the socket
-        # and writing to the file stream
+        """start receiving the file from the socket
+        and writing to the file stream"""
 
         # listen port until n requesters
         self.connection.listen(20)
@@ -113,8 +114,8 @@ class FileServer:
                 # convert to integer
                 filesize = int(filesize)
 
-                # file path output
-                filepath = join(self.output_path, filename)
+                # file path
+                filepath = join(self.path, filename)
 
                 print(filename, filepath, filesize)
 
@@ -132,9 +133,13 @@ class FileServer:
             client_socket.close()
 
 if __name__ == "__main__":
-    from local import server_host
-
-    # if host not set, the default is 0.0.0.0
-    fs = FileServer(host=server_host)
+    from local import (
+        server_host, port, buffer_size, separator,
+        app_path, server_path
+    )
+    fs = FileServer(
+        host=server_host, port=port, buffer_size=buffer_size,
+        separator=separator, app_path=app_path, path=server_path
+    )
     # fs.receive_file() # get only one file
-    fs.bulk_receive_file() # listens port and receive files, saving at output path
+    fs.bulk_receive_file() # listens port and receive files, saving at file path

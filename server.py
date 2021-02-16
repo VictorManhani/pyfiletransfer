@@ -1,8 +1,6 @@
-# import tqdm
 import socket
 from os.path import basename, join, abspath, dirname
 from path import convert_path
-
 from buffer import Buffer
 
 class FileServer:
@@ -10,16 +8,17 @@ class FileServer:
 
     def __init__(self, *args, **kwargs):
         # device's IP address
-        self.host = "0.0.0.0"
-        self.port = 5001
+        self.host = kwargs.get("host", "0.0.0.0")
+        self.port = kwargs.get("port", 5001)
         # receive 4096 bytes each time
-        self.buffer_size = 4096
+        self.buffer_size = kwargs.get("buffer_size", 4096)
         # file separator
-        self.separator = "<SEPARATOR>"
+        self.separator = kwargs.get("separator", "<SEPARATOR>")
         # absolute path
-        self.app_abspath = dirname(abspath(__file__))
+        self.app_path = kwargs.get("app_path", dirname(abspath(__file__)))
         # input path
-        self.output_path = join(self.app_abspath, "output")
+        self.output_path = kwargs.get("output_path", join(self.app_path, "output"))
+        # initilize socket connection
         self.connection = self.get_connection(self.host, self.port)
 
     def get_connection(self, host, port):
@@ -132,6 +131,10 @@ class FileServer:
 
             client_socket.close()
 
-fs = FileServer()
-# fs.receive_file()
-fs.bulk_receive_file()
+if __name__ == "__main__":
+    from local import server_host
+
+    # if host not set, the default is 0.0.0.0
+    fs = FileServer(host=server_host)
+    # fs.receive_file() # get only one file
+    fs.bulk_receive_file() # listens port and receive files, saving at output path

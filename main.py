@@ -1,3 +1,4 @@
+# references
 # https://www.thepythoncode.com/article/send-receive-files-using-sockets-python
 # https://www.csestack.org/python-oserror-winerror-10022-invalid-argument-was-supplied/
 # https://stackoverflow.com/questions/53136368/sending-multiple-files-python-using-socket
@@ -9,11 +10,29 @@
 
 # [APP NAME]: FILE TRANSFER
 
-from os import system
+from threading import Thread
 from time import sleep
 
-system("py server.py")
+from server import FileServer
+from client import FileClient
+
+def fileserver():
+    # init file server
+    fs = FileServer(host="0.0.0.0", port=5001)
+    # listen client's files
+    fs.bulk_receive_file()
+
+def fileclient():
+    # init file client
+    fc = FileClient(host="localhost", port=5001)
+    # send bulk files to server
+    fc.bulk_send_file()
+
+thread_server = Thread(target=fileserver)
+thread_server.start()
 
 sleep(5)
 
-system("py client.py")
+thread_server = Thread(target=fileclient)
+thread_server.start()
+

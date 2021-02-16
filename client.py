@@ -1,4 +1,3 @@
-# import tqdm
 import socket
 from os import listdir
 from os.path import abspath, join, dirname, getsize, exists
@@ -38,14 +37,11 @@ class FileClient:
         # connecting to the server:
 
     def file_print(self, filename, filepath, filesize):
-        # hashs = (len(filename)+len(str(filesize))) * "#"
-        # print("%s [FILE TRANSFER] %s" % (hashs, hashs))
         print("\n[FILE NAME]:", filename)
         print("[FILE PATH]:", filepath)
         print("[FILE SIZE]:", filesize, "\n")
 
     def send_file(self, filename):
-
         # join input path with filename
         filepath = join(self.input_path, filename)
         
@@ -60,13 +56,13 @@ class FileClient:
         print("[+] Connected.")
 
         sbuf = Buffer(self.connection, self.buffer_size)
-        print("\n\n", filesize, "\n\n")
         sbuf.put_utf8(f"{filepath}{self.separator}{filesize}")
 
         # pretty print at terminal
         self.file_print(filename, filepath, filesize)
 
         # start sending the file
+        # import tqdm
         # progress = tqdm.tqdm(
         #     range(filesize), f"Sending {filepath}", unit="B", 
         #     unit_scale=True, unit_divisor=1024)
@@ -80,8 +76,10 @@ class FileClient:
         for filename in listdir(self.input_path):
             self.send_file(filename)
 
-# fc = FileClient(host="192.168.1.2") # my phone
-fc = FileClient() # localhost
-# fc.send_file("abc.txt")
-# fc.send_file("test2 - Copia - Copia - Copia - Copia - Copia - Copia - Copia - Copia (2).txt")
-fc.bulk_send_file()
+if __name__ == "__main__":
+    from local import client_host
+
+    # if host not set, the default is localhost
+    fc = FileClient(host=client_host)
+    # fc.send_file("abc.txt")
+    fc.bulk_send_file() # send all files from input path to server

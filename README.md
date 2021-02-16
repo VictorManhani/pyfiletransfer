@@ -2,14 +2,16 @@
 pyfiletransfer is my own file server built with python for Linux, Windows, Android and IOS (under development)
 
 ## requirements
-python=3.9
+    python=3.9
 
 ## how to use
 
-At terminal execute the command:
+1. At terminal, enter on the project path.
 
-``
-py main.py
-``
+2. Execute the command below:
 
-It will executes the python main file, that runs the server that will listen the client and after 5 seconds the client will send files to server consumption.
+    ``
+    py main.py
+    ``
+
+* It will execute the python main file, runs the server that will listen the client and after 5 seconds the client will send files that are in the input folder to server ingest to output path.

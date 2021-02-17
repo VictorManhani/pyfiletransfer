@@ -10,6 +10,9 @@
 # https://stackabuse.com/creating-and-deleting-directories-with-python/
 # https://stackoverflow.com/questions/49284015/how-to-check-if-folder-is-empty-with-python
 # https://www.guru99.com/python-check-if-file-exists.html
+# https://stackoverflow.com/questions/2212643/python-recursive-folder-read
+# https://stackoverflow.com/questions/5552555/unicodedecodeerror-invalid-continuation-byte
+# https://stackoverflow.com/questions/56453782/utf-8-codec-cant-decode-byte-0xe2-invalid-continuation-byte-error
 
 # [APP NAME]: FILE TRANSFER
 
